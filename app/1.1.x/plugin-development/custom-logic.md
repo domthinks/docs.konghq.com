@@ -12,10 +12,11 @@ chapter: 3
 ## Introduction
 
 A Kong plugin allows you to inject custom logic (in Lua) at several
-entry-points in the life-cycle of a request/response as it is proxied by Kong.
-To do so, one must implement one or several of the methods of the
-`base_plugin.lua` interface. Those methods are to be implemented in a module
-namespaced under: `kong.plugins.<plugin_name>.handler`
+entry-points in the life-cycle of a request/response or a tcp stream
+as it is proxied by Kong. To do so, one must implement one or several
+of the methods of the `base_plugin.lua` interface. Those methods are
+to be implemented in a module namespaced under:
+`kong.plugins.<plugin_name>.handler`
 
 ## Module
 
@@ -23,21 +24,21 @@ namespaced under: `kong.plugins.<plugin_name>.handler`
 kong.plugins.<plugin_name>.handler
 ```
 
-## Available request contexts
+## Available contexts
 
 The plugins interface allows you to override any of the following methods in
 your `handler.lua` file to implement custom logic at various entry-points
 of the execution life-cycle of Kong:
 
-| Function name           | lua-nginx-module context           | Description
-|-------------------------|------------------------------------|--------------
-| `:init_worker()`         | [init_worker_by_lua]               | Executed upon every Nginx worker process's startup.
-| `:certificate()`         | [ssl_certificate_by_lua_block]     | Executed during the SSL certificate serving phase of the SSL handshake.
-| `:rewrite()`             | [rewrite_by_lua_block]             | Executed for every request upon its reception from a client as a rewrite phase handler. *NOTE* in this phase neither the `Service` nor the `Consumer` have been identified, hence this handler will only be executed if the plugin was configured as a global plugin!
-| `:access()`              | [access_by_lua]                    | Executed for every request from a client and before it is being proxied to the upstream service.
-| `:header_filter()`       | [header_filter_by_lua]             | Executed when all response headers bytes have been received from the upstream service.
-| `:body_filter()`         | [body_filter_by_lua]               | Executed for each chunk of the response body received from the upstream service. Since the response is streamed back to the client, it can exceed the buffer size and be streamed chunk by chunk. hence this method can be called multiple times if the response is large. See the [lua-nginx-module] documentation for more details.
-| `:log()`                 | [log_by_lua]                       | Executed when the last response byte has been sent to the client.
+| Function name           | Context                        | Description
+|-------------------------|--------------------------------|--------------
+| `:init_worker()`        | [init_worker_by_lua]           | Executed upon every Nginx worker process's startup.
+| `:certificate()`        | [ssl_certificate_by_lua_block] | Executed during the SSL certificate serving phase of the SSL handshake.
+| `:rewrite()`            | [rewrite_by_lua_block]         | Executed for every request upon its reception from a client as a rewrite phase handler. *NOTE* in this phase neither the `Service` nor the `Consumer` have been identified, hence this handler will only be executed if the plugin was configured as a global plugin!
+| `:access()`             | [access_by_lua]                | Executed for every request from a client and before it is being proxied to the upstream service.
+| `:header_filter()`      | [header_filter_by_lua]         | Executed when all response headers bytes have been received from the upstream service.
+| `:body_filter()`        | [body_filter_by_lua]           | Executed for each chunk of the response body received from the upstream service. Since the response is streamed back to the client, it can exceed the buffer size and be streamed chunk by chunk. hence this method can be called multiple times if the response is large. See the [lua-nginx-module] documentation for more details.
+| `:log()`                | [log_by_lua]                   | Executed when the last response byte has been sent to the client.
 
 All of those functions take one parameter which is given by Kong upon its
 invocation: the configuration of your plugin. This parameter is a Lua table,

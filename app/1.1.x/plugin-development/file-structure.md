@@ -23,7 +23,7 @@ kong.plugins.<plugin_name>.<module_name>
 > Your modules of course need to be accessible through your
 > [package.path](http://www.lua.org/manual/5.1/manual.html#pdf-package.path)
 > variable, which can be tweaked to your needs via the
-> [lua_package_path](/{{page.kong_version}}/configuration/#development-miscellaneous-section)
+> [lua_package_path](/{{page.kong_version}}/configuration/#lua_package_path)
 > configuration property.
 > However, the preferred way of installing plugins is through
 > [LuaRocks](https://luarocks.org/), which Kong natively integrates with.
@@ -31,7 +31,7 @@ kong.plugins.<plugin_name>.<module_name>
 
 To make Kong aware that it has to look for your plugin's modules, you'll have
 to add it to the
-[plugins](/{{page.kong_version}}/configuration/#general-section) property in
+[plugins](/{{page.kong_version}}/configuration/#plugins) property in
 your configuration file, which is a comma-separated list. For example:
 
 ```yaml
@@ -81,7 +81,7 @@ simple-plugin
 ## Advanced plugin modules
 
 Some plugins might have to integrate deeper with Kong: have their own table in
-the database, expose endpoints in the Admin API, etc... Each of those can be
+the database, expose endpoints in the Admin API, etc. Each of those can be
 done by adding a new module to your plugin. Here is what the structure of a
 plugin would look like if it was implementing all of the optional modules:
 
@@ -91,8 +91,8 @@ complete-plugin
 ├── daos.lua
 ├── handler.lua
 ├── migrations
-│   ├── cassandra.lua
-│   └── postgres.lua
+│   ├── init.lua
+│   └── 000_base_complete_plugin.lua
 └── schema.lua
 ```
 
